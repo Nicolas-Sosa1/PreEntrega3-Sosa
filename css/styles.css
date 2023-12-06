@@ -703,23 +703,6 @@ tr:hover {
 
 
 
-  .btn-vaciar-carrito {
-    background-color: #000000;
-    color: #fff;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    width: 100%;
-    border-radius: 5px;
-    margin-bottom: 10px;
-  }
-  
-  .btn-vaciar-carrito:hover {
-    color: red;
-  }
-
-
-
   .product-card:hover {
     transform: scale(1.02);
     transition: transform 0.5s ease;
@@ -760,6 +743,7 @@ tr:hover {
 }
 
 
+
 /*VENTANA EMERGENTE*/
 
 
@@ -770,7 +754,7 @@ tr:hover {
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: white;
-    padding: 20px;
+    padding: 10px;
     border: 1px solid #ccc; 
     border-radius: 10px; 
     z-index: 1;
@@ -779,6 +763,7 @@ tr:hover {
   
   .contenido-ventana {
     text-align: center;
+    font-size: 16px;
 
   }
   
@@ -812,3 +797,84 @@ tr:hover {
     border: 2px solid red;
   }
   
+  
+
+ 
+.carrito-item .remove-from-cart,
+.carrito-item .btn-manage-quantity {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    margin-top: 8px;
+    cursor: pointer;
+}
+
+
+.carrito-item .remove-from-cart {
+    background-color: #000000; 
+}
+
+.carrito-item .btn-manage-quantity {
+    background-color: #000000; 
+    margin-right: 5px;
+}
+
+
+.carrito-container #vaciar-carrito {
+    background-color: black;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    margin-top: 8px;
+    cursor: pointer;
+}
+
+
+.carrito-item .btn-manage-quantity,
+.carrito-item .remove-from-cart,
+#vaciar-carrito {
+    font-size: 14px; 
+    padding: 8px 12px;
+}
+
+.carrito-nombre,
+.carrito-precio {
+    font-size: 16px; 
+}
+
+.carrito-imagen {
+    height: 120px; 
+}
+
+
+.btn-pagar {
+    font-size: 14px; 
+    padding: 10px; 
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.btn-pagar:hover {
+    color: red;
+}
+
+
+
+
+.btn-vaciar-carrito {
+    background-color: #000000;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    width: 100%;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+#vaciar-carrito.btn-vaciar-carrito:hover {
+    color: red; 
+}
+

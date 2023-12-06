@@ -1,12 +1,12 @@
 
 // Zona new products (cambiar de imagen al pasar el cursor)
 
-var isHovered = false;
+let isHovered = false;
 
 function changeImageOnHover(carouselId, newImageUrl) {
   if (!isHovered) {
     isHovered = true;
-    var carousel = new bootstrap.Carousel(document.getElementById(carouselId));
+    let carousel = new bootstrap.Carousel(document.getElementById(carouselId));
     carousel.to(1);
     document.querySelector(`#${carouselId} img`).src = newImageUrl;
   }
@@ -15,7 +15,7 @@ function changeImageOnHover(carouselId, newImageUrl) {
 function resetImageOnHover(carouselId, originalImageUrl) {
   if (isHovered) {
     isHovered = false;
-    var carousel = new bootstrap.Carousel(document.getElementById(carouselId));
+    let carousel = new bootstrap.Carousel(document.getElementById(carouselId));
     carousel.to(0);
     document.querySelector(`#${carouselId} img`).src = originalImageUrl;
   }
@@ -142,31 +142,51 @@ function cerrarSesion() {
  
   
 
+//Zona de carrito
 
-
-// ZONA CARRITO DE COMPRAS
-
-document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("DOMContentLoaded", function () {
     const productos = [
-        { id: 1, nombre: "Remera Hustlers Calavera", precio: 12999, imagen: "IMG/fuego-calavera.png"},
+        { id: 1, nombre: "Remera Hustlers Calavera", precio: 12999, imagen: "IMG/fuego-calavera.png" },
         { id: 2, nombre: "Remera Hustlers The City", precio: 10999, imagen: "IMG/remera-verde.png" },
         { id: 3, nombre: "Remera Hustlers Vesrion 2.0", precio: 9800, imagen: "IMG/calavera-simple1.png" }
     ];
-
-    const carrito = [];
+  
+    let carrito = obtenerCarritoDesdeLocalStorage(); 
     const carritoLista = document.getElementById("carrito-lista");
     const totalElemento = document.getElementById("total");
     const carritoSection = document.getElementById("carrito");
     const cartCountElement = document.getElementById("cart-count");
-
+  
+    actualizarCarrito();
+  
+    function obtenerCarritoDesdeLocalStorage() {
+        const carritoGuardado = localStorage.getItem('carrito');
+        return carritoGuardado ? JSON.parse(carritoGuardado) : [];
+    }
+  
+    function guardarCarritoEnLocalStorage() {
+        localStorage.setItem('carrito', JSON.stringify(carrito));
+    }
+  
+    function eliminarSeccionDelCarrito(id) {
+        carrito = carrito.filter((producto) => producto.id !== id);
+        actualizarCarrito();
+        mostrarCarrito();
+    }
+  
+    function eliminarUnidadDelCarrito(index) {
+        const id = carrito[index].id;
+        eliminarSeccionDelCarrito(id);
+    }
+  
     function actualizarCarrito() {
         carritoLista.innerHTML = "";
         let total = 0;
-
+  
         carrito.forEach((producto, index) => {
             const productoEnLista = productos.find((p) => p.id === producto.id);
             total += productoEnLista.precio * producto.cantidad;
-
+  
             const productoElemento = document.createElement("div");
             productoElemento.classList.add("carrito-item", "d-flex");
             productoElemento.innerHTML = `
@@ -174,83 +194,87 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title carrito-nombre">${productoEnLista.nombre}</h5>
                     <p class="card-text carrito-precio">$${productoEnLista.precio.toFixed(2)} x ${producto.cantidad}</p>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-secondary btn-manage-quantity" data-index="${index}" data-action="decrease">-</button>
+                        <button class="btn btn-secondary btn-manage-quantity" data-index="${index}" data-action="increase">+</button>
+                    </div>
                     <button class="btn btn-danger remove-from-cart" data-index="${index}">Eliminar</button>
                 </div>
             `;
             carritoLista.appendChild(productoElemento);
         });
-
+  
         totalElemento.textContent = total.toFixed(2);
-
-        
+  
         cartCountElement.textContent = carrito.reduce((acc, producto) => acc + producto.cantidad, 0);
+  
+        guardarCarritoEnLocalStorage();
     }
-
+  
+    function manejarCantidad(index, action) {
+        const producto = carrito[index];
+        switch (action) {
+            case "increase":
+                producto.cantidad++;
+                break;
+            case "decrease":
+                if (producto.cantidad > 1) {
+                    producto.cantidad--;
+                }
+                break;
+        }
+        actualizarCarrito();
+    }
+  
     function agregarAlCarrito(id) {
         const productoExistente = carrito.find((producto) => producto.id === id);
-
+  
         if (productoExistente) {
             productoExistente.cantidad++;
         } else {
             carrito.push({ id, cantidad: 1 });
         }
-
+  
         actualizarCarrito();
         mostrarCarrito();
     }
-
-    function eliminarUnidadDelCarrito(index) {
-        const producto = carrito[index];
-        if (producto.cantidad > 1) {
-            producto.cantidad--;
-        } else {
-            carrito.splice(index, 1);
-        }
-        actualizarCarrito();
-        mostrarCarrito();
-    }
-
+  
     function mostrarCarrito() {
         carritoSection.classList.add("show-cart");
     }
-
-
-        function cerrarCarrito() {
-            carritoSection.classList.remove("show-cart");
-        }
-        
-    
-
-   
+  
+    function cerrarCarrito() {
+        carritoSection.classList.remove("show-cart");
+    }
+  
     document.getElementById("cart-icon").addEventListener("click", function () {
         carritoSection.classList.toggle("show-cart");
     });
-
-   
+  
     document.querySelectorAll(".add-to-cart").forEach((button, index) => {
         button.addEventListener("click", () => {
             agregarAlCarrito(productos[index].id);
         });
     });
-
-   
+  
     document.getElementById("btn-cerrar-carrito").addEventListener("click", cerrarCarrito);
-
-   
+  
     document.getElementById("vaciar-carrito").addEventListener("click", function () {
         carrito.length = 0;
         actualizarCarrito();
     });
-
-   
+  
     document.addEventListener("click", function (event) {
         if (event.target.classList.contains("remove-from-cart")) {
             const index = event.target.dataset.index;
             eliminarUnidadDelCarrito(index);
         }
+  
+        if (event.target.classList.contains("btn-manage-quantity")) {
+            const index = event.target.dataset.index;
+            const action = event.target.dataset.action;
+            manejarCantidad(index, action);
+        }
     });
-});
-
-
-
-
+  });
+  
